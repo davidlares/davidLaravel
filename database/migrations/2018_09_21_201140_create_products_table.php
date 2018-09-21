@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use App\Product;
 
 class CreateProductsTable extends Migration
 {
@@ -15,6 +16,13 @@ class CreateProductsTable extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('name');
+            $table->string('description');
+            $table->integer('quantity')->unsigned(); // positive number
+            $table->string('status')->default(Product::NOT_AVAILABLE);
+            $table->string('image');
+            $table->integer('seller_id')->unsigned();
+            $table->foreign('seller_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
     }
