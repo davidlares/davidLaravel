@@ -15,6 +15,8 @@ class User extends Authenticatable
     const ADMIN = 'true';
     const REGULAR = 'false';
 
+    protected $table = 'users';
+
     protected $fillable = [
         'name', 'email', 'password', 'verified', 'verification_token', 'admin'
     ];

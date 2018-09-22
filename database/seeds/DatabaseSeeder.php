@@ -1,16 +1,42 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use App\User;
+use App\Category;
+use App\Product;
+use App\Transaction;
+use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
     public function run()
     {
-        // $this->call(UsersTableSeeder::class);
+        // disabling FK inconsistencies
+        DB::statement('SET FOREIGN_KEY_CHECKS=0');
+
+        // truncating tables
+        User::truncate();
+        Category::truncate();
+        Product::truncate();
+        Transaction::truncate();
+        DB::table('category_product')->truncate();
+
+        // inserting database
+        $users = 200;
+        $categories = 30;
+        $products = 1000;
+        $transactions = 1000;
+
+        factory(User::class, $users)->create();
+        factory(Category::class, $categories)->create();
+
+        factory(Product::class, $transactions)->create()->each(
+            function($product){
+              $category = Category::all()->random(mt_rand(1,5))->pluck('id');
+              $product->categories()->attach($category);
+            }
+        );
+
+        factory(Transaction::class, $transactions)->create();
     }
 }
