@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\User;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\ApiController;
 use App\User;
 
-class UserController extends Controller
+class UserController extends ApiController
 {
     /**
      * Display a listing of the resource.
@@ -17,15 +17,10 @@ class UserController extends Controller
     {
         $users = User::all();
         // return root (index) + status
-        return response()->json(['data' => $users], 200);
+        // return response()->json(['data' => $users], 200);
+        return $this->showAll($users);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
 
@@ -39,25 +34,13 @@ class UserController extends Controller
         return response()->json(['data' => $user], 201);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
         $user = User::findOrFail($id);
-        return response()->json(['data' => $user], 200);
+        // return response()->json(['data' => $user], 200);
+        return $this->showOne($user, 200);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
     {
       $user = User::findOrFail($id);
@@ -86,7 +69,8 @@ class UserController extends Controller
 
       if($request->has('admin')){
         if(!$user->isVerified()){
-          return response()->json(['error' => 'Verified users can only change their admin status', 'code' => 409], 409);
+          // return response()->json(['error' => 'Verified users can only change their admin status', 'code' => 409], 409);
+          return $this->errorResponse('Verified users can only change their admin status', 409);
         }
         $user->admin = $request->admin;
       }
@@ -94,24 +78,20 @@ class UserController extends Controller
       // need to change something for update the record
 
       if(!$user->isDirty()){
-        return response()->json(['error' => 'Must changed at least one text field to update', 'code' => 422], 422);
+        // return response()->json(['error' => 'Must changed at least one text field to update', 'code' => 422], 422);
+        return $this->errorResponse('error' => 'Must changed at least one text field to update', 422);
       }
 
       $user->save();
-      return response()->json(['data' => $user], 200);
-
+      // return response()->json(['data' => $user], 200);
+      return $this->showOne($user, 200);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
         $user = User::findOrFail($id);
         $user->delete();
-        return response()->json(['data', $user], 200);
+        // return response()->json(['data', $user], 200);
+        return $this->showOne($user, 200);
     }
 }
