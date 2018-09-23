@@ -23,7 +23,12 @@ class UserController extends ApiController
 
     public function store(Request $request)
     {
-
+        $this->validate($request, [
+          'name' => 'required',
+          'email' => 'required|email|unique:users',
+          'password' => 'required|min:6|confirmed'
+        ]);
+        
         $fields = $request->all();
         $fields['password'] = bcrypt($request->password);
         $fields['verified'] = User::NOT_VERIFIED;
@@ -31,7 +36,8 @@ class UserController extends ApiController
         $fields['admin'] = User::REGULAR;
 
         $user = User::create($fields);
-        return response()->json(['data' => $user], 201);
+        // return response()->json(['data' => $user], 201);
+        return $this->showOne($user, 201);
     }
 
     public function show($id)
