@@ -25,6 +25,23 @@ class User extends Authenticatable
         'password', 'remember_token', 'verification_token'
     ];
 
+    // mutators and accesors
+
+    // mutators -> capitalizing before being a DB Record
+    public function setNameAttribute($attr){
+      $this->attributes['name'] = strtolower($attr);
+    }
+
+    // email mutator
+    public function setEmailAttribute($attr){
+      $this->attributes['email'] = strtolower($attr);
+    }
+
+    // accesor -> transforming the value (not for de BD w/o updating it)
+    public function getNameAttribute($attr){
+      return ucwords($attr);
+    }
+
     public function isVerified(){
       return $this->verified == User::VERIFIED;
     }
