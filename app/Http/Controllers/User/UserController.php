@@ -79,7 +79,7 @@ class UserController extends ApiController
 
       if(!$user->isDirty()){
         // return response()->json(['error' => 'Must changed at least one text field to update', 'code' => 422], 422);
-        return $this->errorResponse('error' => 'Must changed at least one text field to update', 422);
+        return $this->errorResponse('Must changed at least one text field to update', 422);
       }
 
       $user->save();
