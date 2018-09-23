@@ -28,7 +28,7 @@ class UserController extends ApiController
           'email' => 'required|email|unique:users',
           'password' => 'required|min:6|confirmed'
         ]);
-        
+
         $fields = $request->all();
         $fields['password'] = bcrypt($request->password);
         $fields['verified'] = User::NOT_VERIFIED;
@@ -40,16 +40,19 @@ class UserController extends ApiController
         return $this->showOne($user, 201);
     }
 
-    public function show($id)
+    // model injection as parameters
+    public function show(User $user)
     {
-        $user = User::findOrFail($id);
+        // $user = User::findOrFail($id);
+
         // return response()->json(['data' => $user], 200);
         return $this->showOne($user, 200);
     }
 
-    public function update(Request $request, $id)
+    // model injection
+    public function update(Request $request, User $user)
     {
-      $user = User::findOrFail($id);
+      // $user = User::findOrFail($id);
 
       $this->validate($request,[
         'email' => 'email|unique:users,email,'. $user->id,
@@ -93,9 +96,9 @@ class UserController extends ApiController
       return $this->showOne($user, 200);
     }
 
-    public function destroy($id)
+    public function destroy(User $user)
     {
-        $user = User::findOrFail($id);
+        // $user = User::findOrFail($id);
         $user->delete();
         // return response()->json(['data', $user], 200);
         return $this->showOne($user, 200);
