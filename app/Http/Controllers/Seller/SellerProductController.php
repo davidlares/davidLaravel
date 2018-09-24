@@ -7,6 +7,7 @@ use App\Product;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ApiController;
+use Illuminate\Support\Facades\Storage;
 
 class SellerProductController extends ApiController
 {
@@ -34,7 +35,8 @@ class SellerProductController extends ApiController
 
         $data = $request->all();
         $data['status'] = Product::NOT_AVAILABLE;
-        $data['image'] = '1.jpg';
+        // $data['image'] = '1.jpg';
+        $data['image'] = $request->image->store(''); // default locations and file system
         $data['seller_id'] = $seller->id;
 
         $product = Product::create($data);
@@ -59,6 +61,13 @@ class SellerProductController extends ApiController
           return $this->errorResponse('An active product must have at least one category', 409);
         }
       }
+
+      // request with files
+      if($request->hasFile('image')){
+        Storage::delete($product->image);
+        $product->image = $request->image->store('');
+      }
+
       if($product->isClean()){
         return $this->errorResponse('You must specify a different value to update', 422);
       }
@@ -70,6 +79,8 @@ class SellerProductController extends ApiController
 
     public function destroy(Seller $seller, Product $product){
       $this->verifyVendor($seller,$product);
+      // removing file (image) -> hard delete
+      Storage::delete($product->image);
       $product->delete();
       return $this->showOne($product);
     }
