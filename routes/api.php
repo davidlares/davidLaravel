@@ -1,3 +1,4 @@
+
 <?php
 
 use Illuminate\Http\Request;
@@ -36,6 +37,10 @@ Route::resource('buyers.sellers','Buyer\BuyerSellerController', ['only' => ['ind
 Route::resource('buyers.categories','Buyer\BuyerCategoryController', ['only' => ['index']]);
 
 Route::resource('products','Product\ProductController', ['only' => ['index','show']]);
+Route::resource('products.transactions','Product\ProductTransactionController', ['only' => ['index']]);
+Route::resource('products.buyers','Product\ProductBuyerController', ['only' => ['index']]);
+Route::resource('products.categories','Product\ProductCategoryController', ['only' => ['index','update','destroy']]);
+Route::resource('products.buyers.transactions','Product\ProductBuyerTransactionController', ['only' => ['store']]);
 
 Route::resource('categories','Category\CategoryController', ['except' => ['create','edit']]);
 Route::resource('categories.products','Category\CategoryProductController', ['only' => ['index']]);
