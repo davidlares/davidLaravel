@@ -2,13 +2,13 @@
 
 namespace App\Mail;
 
+use App\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use App\User;
 
-class UserCreated extends Mailable
+class UserMailChanged extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -21,7 +21,6 @@ class UserCreated extends Mailable
     public function __construct(User $user)
     {
         $this->user = $user;
-        // the attributes are auto inserted into the view
     }
 
     /**
@@ -31,6 +30,6 @@ class UserCreated extends Mailable
      */
     public function build()
     {
-        return $this->text('emails.welcome')->subject('User Created - Laravel API (Confirm)');
+        return $this->text('emails.confirm')->subject('User Confirmed - Laravel API');
     }
 }
