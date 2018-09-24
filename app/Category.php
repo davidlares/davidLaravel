@@ -13,6 +13,9 @@ class Category extends Model
     protected $fillable = ['name','description'];
     protected $dates = ['deleted_at'];
 
+    // hiding pivots
+    protected $hidden = ['pivot'];
+
     public function products(){
       return $this->belongsToMany('App\Product');
     }

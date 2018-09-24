@@ -16,6 +16,9 @@ class Product extends Model
     protected $fillable = ['name','description','quantity','status','image','seller_id'];
     protected $dates = ['deleted_at'];
 
+    // hiding pivots
+    protected $hidden = ['pivot'];
+
     // setting up the transaction option
     public function isAvailable(){
       return $this->status == Product::AVAILABLE;
