@@ -5,11 +5,17 @@ namespace App\Http\Controllers\Category;
 use App\Category;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ApiController;
+use App\Transformers\CategoryTransformer;
 
 class CategoryController extends ApiController
 {
     /* using php artisan make:controller Category/CategoryController --resource --model=Category */
     /* Model Dependency Injection */
+
+    public function __construct(){
+      parent::__construct(); // parent (Controller) construct method
+      $this->middleware('transform.input:' . CategoryTransformer::class)->only(['store','update']);
+    }
 
     public function index()
     {

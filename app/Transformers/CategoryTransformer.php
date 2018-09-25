@@ -28,7 +28,6 @@ class CategoryTransformer extends TransformerAbstract
             ['rel' => 'categories.products', 'href' => route('categories.products.index', $category->id)],
             ['rel' => 'categories.sellers', 'href' => route('categories.sellers.index', $category->id)],
             ['rel' => 'categories.transactions', 'href' => route('categories.transactions.index', $category->id)]
-
           ]
       ];
     }
@@ -41,6 +40,18 @@ class CategoryTransformer extends TransformerAbstract
           'createdDate' => 'created_at',
           'updatedDate' => 'updated_at',
           'deletedDate' => 'deleted_at'
+        ];
+        return isset($attributes[$index]) ? $attributes[$index] : null;
+    }
+
+    public static function transformedAttribute($index){
+        $attributes = [
+          'id' => 'identifier',
+          'name' => 'catname',
+          'description' => 'detail',
+          'created_at' => 'createdDate',
+          'updated_at' => 'updatedDate',
+          'deleted_at' => 'deletedDate'
         ];
         return isset($attributes[$index]) ? $attributes[$index] : null;
     }

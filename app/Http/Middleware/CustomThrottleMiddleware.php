@@ -3,8 +3,8 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Routing\Middleware\ThrottleRequests;
 use App\Traits\ApiResponser;
+use Illuminate\Routing\Middleware\ThrottleRequests;
 
 class CustomThrottleMiddleware extends ThrottleRequests
 {
@@ -12,10 +12,13 @@ class CustomThrottleMiddleware extends ThrottleRequests
 
     protected function buildResponse($key, $maxAttempts) {
 
-      $response = $this->errorResponse("Too manu Attempts", 429);
+      $response = $this->errorResponse("Too many Attempts", 429);
       $retryAfter = $this->limiter->availableIn($key);
-      return $this->addHeaders($response, $maxAttempts,
-      $this->calculateRemainingAttempts($key, $maxAttempts, $retryAfter), $retryAfter);
+      return $this->addHeaders(
+        $response, $maxAttempts,
+        $this->calculateRemainingAttempts($key, $maxAttempts, $retryAfter),
+        $retryAfter
+      );
 
     }
 }

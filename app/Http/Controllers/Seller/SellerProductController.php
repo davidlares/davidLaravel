@@ -7,10 +7,16 @@ use App\Product;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ApiController;
+use App\Transformers\ProductTransformer;
 use Illuminate\Support\Facades\Storage;
 
 class SellerProductController extends ApiController
 {
+  public function __construct(){
+    parent::__construct(); // parent (Controller) construct method
+    $this->middleware('transform.input:' . ProductTransformer::class)->only(['store','update']);
+  }
+
     protected function verifyVendor(Seller $seller, Product $product){
       if($seller->id != $product->seller_id){
         throw new HttpException(422,'Err Processing Request');

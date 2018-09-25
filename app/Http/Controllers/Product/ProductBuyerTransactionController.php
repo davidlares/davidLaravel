@@ -8,9 +8,15 @@ use App\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\ApiController;
+use App\Transactions\TransactionTransformer;
 
 class ProductBuyerTransactionController extends ApiController
 {
+    public function __construct(){
+      parent::__construct(); // parent (Controller) construct method
+      $this->middleware('transform.input:' . TransactionTransformer::class)->only(['store']);
+    }
+
     public function store(Request $request, Product $product, User $buyer) {
 
        $rules = [
@@ -39,7 +45,7 @@ class ProductBuyerTransactionController extends ApiController
          return $this->errorResponse('Not a quantity required for this transaction', 409);
        }
 
-       return DB::transaction(function () use ($request, $product, $buyer) {
+       return DB::transaction(function() use ($request, $product, $buyer) {
 
          $product->quantity = $request->quantity;
          $product->save();

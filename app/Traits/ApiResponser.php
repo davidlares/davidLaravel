@@ -3,10 +3,10 @@
 namespace App\Traits;
 
 use Illuminate\Support\Collection;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 trait ApiResponser {
 
@@ -26,7 +26,8 @@ trait ApiResponser {
 
       if($collection->isEmpty()){
         return $this->successResponse(['data' => $collection], $code);
-      } else {
+      }
+
         // model transformer
         $transformer = $collection->first()->transformer;
         // filtering data with multiples values
@@ -41,7 +42,6 @@ trait ApiResponser {
         // cache reponse
         $collection = $this->cacheResponse($collection);
         return $this->successResponse($collection, $code);
-      }
     }
 
     // show only instance
@@ -55,27 +55,20 @@ trait ApiResponser {
       return $this->successResponse(['data' => $message], $code);
     }
 
-    // transformed responses
-    protected function transformData($data, $transformer){
-      $transformation = fractal($data, new $transformer); // build transformation instance from fractal
-      return $transformation->toArray();
-    }
-
-    protected function sortData(Collection $collection, $transformer){
-      if(request()->has('sort_by')){
-        $attr = $transformer::originalAttribute(request()->sort_by);
-        $collection = $collection->sortBy->{$attr};
-      }
-
-      return $collection;
-    }
-
     protected function filterData(Collection $collection, $transformer){
       foreach (request()->query() as $query => $value) {
         $attr = $transformer::originalAttribute($query);
         if(isset($attr, $value)){
           $collection = $collection->where($attr, $value);
         }
+      }
+      return $collection;
+    }
+
+    protected function sortData(Collection $collection, $transformer){
+      if(request()->has('sort_by')){
+        $attr = $transformer::originalAttribute(request()->sort_by);
+        $collection = $collection->sortBy->{$attr};
       }
 
       return $collection;
@@ -88,7 +81,6 @@ trait ApiResponser {
       ];
 
       Validator::validate(request()->all(), $rules);
-
       // length aware paginator
       $page = LengthAwarePaginator::resolveCurrentPage();
       $perPage = 15;
@@ -105,15 +97,21 @@ trait ApiResponser {
       return $paginated;
     }
 
+    // transformed responses
+    protected function transformData($data, $transformer){
+      $transformation = fractal($data, new $transformer); // build transformation instance from fractal
+      return $transformation->toArray();
+    }
+
     protected function cacheResponse($data){
       $url = request()->url(); // actual url
       $params = request()->query();
 
       ksort($params); // ordering by key (array) -> by reference
-      $params = http_build_query($params); // creates the queryparams URI
-      $fullUrl = "{$url}?{$params}";
+      $queryString = http_build_query($params); // creates the queryparams URI
+      $fullUrl = "{$url}?{$queryString}";
 
-      return Cache::remember($fullUrl ,15/60, function() use ($data){
+      return Cache::remember($fullUrl ,30/60, function() use ($data){
         // data to cache -> in 15 segs by the URL (index or key)
         return $data;
       });

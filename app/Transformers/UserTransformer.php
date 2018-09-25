@@ -26,8 +26,8 @@ class UserTransformer extends TransformerAbstract
             // hateoas
             'links' => [
               ['rel' => 'self', 'href' => route('users.show', $user->id)]
-            ];
-        ]
+            ]
+        ];
     }
 
     public static function originalAttribute($index){
@@ -40,6 +40,20 @@ class UserTransformer extends TransformerAbstract
           'createdDate' => 'created_at',
           'updatedDate' => 'updated_at',
           'deletedDate' => 'deleted_at'
+        ];
+        return isset($attributes[$index]) ? $attributes[$index] : null;
+    }
+
+    public static function transformedAttribute($index){
+        $attributes = [
+          'id' => 'identifier',
+          'name' => 'fullname',
+          'email' => 'emailaddress',
+          'verified' => 'verified',
+          'admin' => 'administrator',
+          'created_at' => 'createdDate',
+          'updated_at' => 'updatedDate',
+          'deleted_at' => 'deletedDate'
         ];
         return isset($attributes[$index]) ? $attributes[$index] : null;
     }
