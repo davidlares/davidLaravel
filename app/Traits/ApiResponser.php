@@ -24,8 +24,14 @@ trait ApiResponser {
       if($collection->isEmpty()){
         return $this->successResponse(['data' => $collection], $code);
       } else {
-        $transformer = $collection->first()->transformer; // model transformer
-        $collection = $this->transformData($collection, $transformer); // setting the transformData method
+        // model transformer
+        $transformer = $collection->first()->transformer;
+        // filtering data with multiples values
+        $collection = $this->filterData($collection, $transformer);
+        // it should be executed b4 the fractal = laravel.api/api/users?sort_by=name
+        $collection = $this->sortData($collection, $transformer);
+        // setting the transformData method
+        $collection = $this->transformData($collection, $transformer);
         return $this->successResponse($collection, $code);
       }
     }
@@ -45,5 +51,25 @@ trait ApiResponser {
     protected function transformData($data, $transformer){
       $transformation = fractal($data, new $transformer); // build transformation instance from fractal
       return $transformation->toArray();
+    }
+
+    protected function sortData(Collection $collection, $transformer){
+      if(request()->has('sort_by')){
+        $attr = $transformer::originalAttribute(request()->sort_by);
+        $collection = $collection->sortBy->{$attr};
+      }
+
+      return $collection;
+    }
+
+    protected function filterData(Collection $collection, $transformer){
+      foreach (request()->query() as $query => $value) {
+        $attr = $transformer::originalAttribute($query);
+        if(isset($attr, $value)){
+          $collection = $collection->where($attr, $value);
+        }
+      }
+
+      return $collection;
     }
 }
