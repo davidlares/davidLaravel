@@ -2,6 +2,7 @@
 
 namespace App;
 use App\User;
+use App\Transformers\SellerTransformer;
 use App\Scopes\SellerScope;
 
 class Seller extends User
@@ -13,6 +14,10 @@ class Seller extends User
       // agregando el Scope
       static::addGlobalScope(new SellerScope);
   }
+
+    // transformers
+    public $transformer = SellerTransformer::class;
+
     // extended for User
     public function products(){
       return $this->hasMany('App\Product');

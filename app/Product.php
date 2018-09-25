@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Transformers\ProductTransformer;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -18,6 +19,9 @@ class Product extends Model
 
     // hiding pivots
     protected $hidden = ['pivot'];
+
+    // transformers
+    public $transformer = ProductTransformer::class;
 
     // setting up the transaction option
     public function isAvailable(){

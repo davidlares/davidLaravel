@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Notifications\Notifiable;
+use App\Transformers\UserTransformer;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -27,6 +28,10 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token', 'verification_token'
     ];
+
+
+    // transformers
+    public $transformer = UserTransformer::class;
 
     // mutators and accesors
 
